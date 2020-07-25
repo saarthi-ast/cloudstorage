@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Bingo 75 Board</title>
+<style type="text/css">
+th {
+	background-color: LightGray;
+	text-align: center;
+}
+
+tr {
+	background-color: yellow;
+	text-align: center;
+}
+
+td {
+	height: 48px;;
+}
+
+input {
+	text-align: center;
+	height: 48px;
+}
+
+input[type="text"] {
+	text-align: center;
+	height: 44px;
+	font-size: 40px;
+	width: 114px;
+	font-weight: bolder;
+}
+
+button {
+	width: 70px;
+	height: 25px
+}
+
+#total {
+	background-color: lightblue;
+}
+
+div {
+	width: 1258px;
+	height: 488px;
+	background-color: cadetblue;
+	border: 2px solid gray;
+	overflow: scroll;
+	margin: 10px 100px 0px 100px;
+}
+
+body {
+	background: #000;
+	margin: 0;
+}
+</style>
+</head>
+<body onkeydown="showKeyCode(event)">
+
+	<form id="unoForm" name="unoForm">
+		<div>
+			<table id="mainTable">
+
+			</table>
+
+		</div>
+		<div style="height: 205px;">
+			<table style="width: 100%; background-color: cadetblue;">
+				<tr>
+					<td style="width: 20%; background-color: cadetblue;"><img
+						alt="Bingo .. Click Me" src="bingo1.gif"
+						style="height: 200px; width: 200px; text-align: left !important;"
+						id="submit" onclick="submitForm()"></td>
+					<td style="width: 5%; background-color: cadetblue;"><span
+						style="font-size: 40; width: 200px; visibility: hidden;">
+							Placeholder </span></td>
+					<td style="width: 30%; background-color: cadetblue;"><span
+						id="newNumber"
+						style="font-size: 200px; width: 200px; text-align: center"></span></td>
+					<td style="width: 45%; background-color: cadetblue; color: blue"><span
+						id="allNumbers" style="text-align: center"></span></td>
+				</tr>
+			</table>
+		</div>
+	</form>
+
+</body>
+<script type="text/javascript">
+	totalRows = colVal = completed = 0;
+	bcolor = "yellow";
+	maxVal = 75;
+	allNumbers = "";
+	colArray = [ "yellow", "pink", "lightcyan" ];
+	for (var i = 0; i < 8; i++) {
+		addRow();
+	}
+	function submitForm() {
+		
+		if (completed == maxVal) {
+			alert("Game complete... Last number is :"
+					+ document.getElementById("newNumber").innerHTML);
+		}else
+			var nextNum = Math.ceil(Math.random() * maxVal);
+		while (completed < maxVal
+				&& document.getElementById(nextNum).style.color != "rgb(245, 245, 245)") {
+			nextNum = Math.ceil(Math.random() * maxVal);
+		}
+		if ("" == allNumbers) {
+			allNumbers += nextNum;
+		} else {
+			if (0 != completed % 15)
+				allNumbers = allNumbers + "," + nextNum;
+			else
+				allNumbers = allNumbers + ",<br/>" + nextNum;
+		}
+		++completed;
+
+		document.getElementById(nextNum).style.color = "black";
+
+		document.getElementById("newNumber").innerHTML = nextNum;
+		document.getElementById("allNumbers").innerHTML = allNumbers;
+		document.getElementById("newNumber").style.visibility = "inherit";
+	}
+
+	function pickRowColor() {
+		var colIdx = colArray.indexOf(bcolor);
+		if (2 === colIdx) {
+			colIdx = 0
+		} else {
+			colIdx++;
+		}
+		var nextCol = colArray[colIdx];
+
+		return nextCol;
+	}
+
+	function addRow() {
+		totalRows++;
+
+		var newRow = document.createElement("TR");
+		var rowCol = bcolor;
+
+		newRow.setAttribute("style", "background-color:" + rowCol);
+		newRow.setAttribute("id", "row" + totalRows);
+		document.getElementById("mainTable").appendChild(newRow);
+
+		var newCol = document.createElement("TD");
+		var t = document.createTextNode(totalRows);
+		newCol.appendChild(t);
+		document.getElementById("row" + totalRows).appendChild(newCol);
+
+		var newCol1 = document.createElement("TD");
+		var inpp = createCol();
+		newCol1.appendChild(inpp);
+		document.getElementById("row" + totalRows).appendChild(newCol1);
+
+		var newCol2 = document.createElement("TD");
+		var inpp = createCol();
+		newCol2.appendChild(inpp);
+		document.getElementById("row" + totalRows).appendChild(newCol2);
+
+		var newCol3 = document.createElement("TD");
+		var inpp = createCol();
+		newCol3.appendChild(inpp);
+		document.getElementById("row" + totalRows).appendChild(newCol3);
+
+		var newCol4 = document.createElement("TD");
+		var inpp = createCol();
+		newCol4.appendChild(inpp);
+		document.getElementById("row" + totalRows).appendChild(newCol4);
+
+		var newCol5 = document.createElement("TD");
+		var inpp = createCol();
+		if (inpp != null) {
+			newCol5.appendChild(inpp);
+			document.getElementById("row" + totalRows).appendChild(newCol5);
+		}
+
+		var newCol6 = document.createElement("TD");
+		var inpp = createCol();
+		if (inpp != null) {
+			newCol6.appendChild(inpp);
+			document.getElementById("row" + totalRows).appendChild(newCol6);
+		}
+
+		var newCol7 = document.createElement("TD");
+		var inpp = createCol();
+		if (inpp != null) {
+			newCol7.appendChild(inpp);
+			document.getElementById("row" + totalRows).appendChild(newCol7);
+		}
+
+		var newCol8 = document.createElement("TD");
+		var inpp = createCol();
+		if (inpp != null) {
+			newCol8.appendChild(inpp);
+			document.getElementById("row" + totalRows).appendChild(newCol8);
+		}
+
+		var newCol9 = document.createElement("TD");
+		var inpp = createCol();
+		if (inpp != null) {
+			newCol9.appendChild(inpp);
+			document.getElementById("row" + totalRows).appendChild(newCol9);
+		}
+
+		var newCol10 = document.createElement("TD");
+		var inpp = createCol();
+		if (inpp != null) {
+			newCol10.appendChild(inpp);
+			document.getElementById("row" + totalRows).appendChild(newCol10);
+		}
+
+		if (0 === totalRows % 3) {
+			rowCol = bcolor = pickRowColor();
+		}
+	}
+
+	function createCol() {
+		if (colVal >= 75) {
+			return null;
+		} else {
+			var inpp = document.createElement("INPUT");
+			inpp.setAttribute("type", "text");
+			inpp.setAttribute("value", ++colVal);
+			inpp.setAttribute("disabled", "disabled");
+			inpp.setAttribute("style", "color:rgb(245, 245, 245)");
+			inpp.setAttribute("id", colVal);
+
+			return inpp;
+		}
+	}
+
+	function showKeyCode(e) {
+		var keycode = (window.event) ? event.keyCode : e.keyCode;
+
+		if (keycode == 116 || keycode == 8) {
+			event.keyCode = 0;
+			event.returnValue = false;
+			return false;
+		}
+	}
+	window.onbeforeunload = function(e) {
+		var e = e || window.event;
+		var msg = "Do you really want to leave this page?"
+
+		// For IE and Firefox
+		if (e) {
+			e.returnValue = msg;
+		}
+
+		// For Safari / chrome
+		return msg;
+	};
+</script>
+</html>
