@@ -8,6 +8,8 @@ import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.List;
 
+import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.*;
+
 @Service
 public class CredentialsService {
     private CredentialsMapper credentialsMapper;
@@ -22,12 +24,17 @@ public class CredentialsService {
 
     // Select All credentials for a user
     public List<Credentials> findCredentialsByUsername(String username) {
-        Integer userId = userService.getUseridByName(username);
-        List<Credentials> credentialsList = credentialsMapper.findCredentialsByUserId(userId);
-        for(Credentials cred:credentialsList){
-            cred.setEditPwd(encryptionService.decryptValue(cred.getPassword(),cred.getKey()));
+        try{
+            Integer userId = userService.getUseridByName(username);
+            List<Credentials> credentialsList = credentialsMapper.findCredentialsByUserId(userId);
+            for(Credentials cred:credentialsList){
+                cred.setEditPwd(encryptionService.decryptValue(cred.getPassword(),cred.getKey()));
+            }
+            return credentialsList;
+        }catch (Exception e){
+            return null;
         }
-        return credentialsList;
+
     }
 
     // Select credentials based on credentialId and userId
@@ -42,17 +49,30 @@ public class CredentialsService {
     }
 
     // Update credentials for a credentialId and userId
-    public Credentials updateCredentialsByCredentialIdAndUserId(Credentials credentials, String username) {
-        Integer userId = userService.getUseridByName(username);
-        SecureRandom random = new SecureRandom();
-        byte[] key = new byte[16];
-        random.nextBytes(key);
-        String encodedKey = Base64.getEncoder().encodeToString(key);
-        String encryptedPassword = encryptionService.encryptValue(credentials.getPassword(),encodedKey);
-        credentials.setKey(encodedKey);
-        credentials.setUserId(userId);
-        credentials.setPassword(encryptedPassword);
-        return credentialsMapper.updateCredentialsByCredentialIdAndUserId(credentials);
+    public String updateCredentialsByCredentialIdAndUserId(Credentials credentials, String username) {
+        try{
+            Integer userId = userService.getUseridByName(username);
+            Credentials existingCred = findCredentialsByIdAndUserId(credentials.getCredentialId(), userId);
+            if(existingCred == null){
+                return CREDENTIAL_NOT_FOUND;
+            }
+            SecureRandom random = new SecureRandom();
+            byte[] key = new byte[16];
+            random.nextBytes(key);
+            String encodedKey = Base64.getEncoder().encodeToString(key);
+            String encryptedPassword = encryptionService.encryptValue(credentials.getPassword(),encodedKey);
+            credentials.setKey(encodedKey);
+            credentials.setUserId(userId);
+            credentials.setPassword(encryptedPassword);
+            Integer updateCount = credentialsMapper.updateCredentialsByCredentialIdAndUserId(credentials);
+            if(updateCount <= 0){
+                return CREDENTIAL_SAVE_ERROR;
+            }
+        }catch (Exception e){
+            return CREDENTIAL_SAVE_ERROR;
+        }
+
+        return SUCCESS;
     }
 
     // Select credentials based on url and userId
@@ -61,16 +81,25 @@ public class CredentialsService {
     }
 
     // Insert credentials
-    public Integer insertCredentials(Credentials credentials, String username) {
-        Integer userId = userService.getUseridByName(username);
-        credentials.setUserId(userId);
-        SecureRandom random = new SecureRandom();
-        byte[] key = new byte[16];
-        random.nextBytes(key);
-        String encodedKey = Base64.getEncoder().encodeToString(key);
-        String encryptedPassword = encryptionService.encryptValue(credentials.getPassword(),encodedKey);
-        credentials.setKey(encodedKey);
-        credentials.setPassword(encryptedPassword);
-        return credentialsMapper.insertCredentials(credentials);
+    public String insertCredentials(Credentials credentials, String username) {
+        try{
+            Integer userId = userService.getUseridByName(username);
+            credentials.setUserId(userId);
+            SecureRandom random = new SecureRandom();
+            byte[] key = new byte[16];
+            random.nextBytes(key);
+            String encodedKey = Base64.getEncoder().encodeToString(key);
+            String encryptedPassword = encryptionService.encryptValue(credentials.getPassword(),encodedKey);
+            credentials.setKey(encodedKey);
+            credentials.setPassword(encryptedPassword);
+            Integer credId = credentialsMapper.insertCredentials(credentials);
+            if(credId <= 0){
+                return CREDENTIAL_SAVE_ERROR;
+            }
+        }catch (Exception e){
+            return CREDENTIAL_SAVE_ERROR;
+        }
+
+        return SUCCESS;
     }
 }

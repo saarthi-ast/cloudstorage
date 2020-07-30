@@ -10,6 +10,9 @@ public class Credentials {
     private Integer userId;
     private String editPwd;
 
+    public Credentials() {
+    }
+
     public String getEditPwd() {
         return editPwd;
     }

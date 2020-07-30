@@ -3,16 +3,13 @@ package com.udacity.jwdnd.course1.cloudstorage.services;
 import com.udacity.jwdnd.course1.cloudstorage.mapper.FilesMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.Files;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.*;
 
 @Service
 public class FilesService {
@@ -29,10 +26,13 @@ public class FilesService {
         try {
             String filename = file.getOriginalFilename();
             if (isFileNameUsed(filename)) {
-                return "Filename is already used. Please use a different file.";
+                return FILE_UPLOAD_DUPLICATE_ERROR;
             } else {
                 User loggedinUser = userService.getUserByName(username);
                 byte[] bytes = file.getBytes();
+                if(bytes.length > (1024*1024)){ // Max file upload size is 1 MB
+                    return FILE_UPLOAD_SIZE_ERROR;
+                }
                 Files userFile = new Files(null,
                         file.getOriginalFilename(),
                         file.getContentType(),
@@ -41,10 +41,10 @@ public class FilesService {
                 filesMapper.saveFile(userFile);
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            return "An error occurred while saving your file. Please try again after sometime.";
+            //e.printStackTrace();
+            return FILE_UPLOAD_ERROR_GENERIC;
         }
-        return "File uploded successfully.";
+        return SUCCESS;
     }
 
     //get file by name

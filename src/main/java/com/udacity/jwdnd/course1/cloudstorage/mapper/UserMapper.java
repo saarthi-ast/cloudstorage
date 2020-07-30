@@ -10,15 +10,15 @@ import org.apache.ibatis.annotations.Select;
 public interface UserMapper {
     //find records with name
     @Select("Select * from users where username=#{username}")
-    public User getUserByName(String username);
+    User getUserByName(String username);
 
     //insert new user
     @Insert("Insert into users (username,salt,password,firstname,lastname) values (" +
             "#{username},#{salt},#{password},#{firstname},#{lastname})")
     @Options(useGeneratedKeys = true,keyProperty = "userid")
-    public Integer insertUser(User user);
+    Integer insertUser(User user);
 
     //find userid by name
     @Select("Select userid from users where username=#{username}")
-    public Integer getUseridByName(String username);
+    Integer getUseridByName(String username);
 }

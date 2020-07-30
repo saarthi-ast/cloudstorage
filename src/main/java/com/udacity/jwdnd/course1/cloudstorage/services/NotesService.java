@@ -2,10 +2,11 @@ package com.udacity.jwdnd.course1.cloudstorage.services;
 
 import com.udacity.jwdnd.course1.cloudstorage.mapper.NotesMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.Notes;
-import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.*;
 
 @Service
 public class NotesService {
@@ -21,24 +22,34 @@ public class NotesService {
 
     // Select notes for a user
     public List<Notes> getNotesByUserName(String username) {
-        Integer userId = userService.getUseridByName(username);
-        return notesMapper.getNotesByUserId(userId);
+        try {
+            Integer userId = userService.getUseridByName(username);
+            return notesMapper.getNotesByUserId(userId);
+        }catch (Exception ex){
+            return null;
+        }
     }
 
     //Update notes
-    public Integer updateNotes(Integer noteId, String noteTitle, String noteDescription, String username){
-        Notes notes = notesMapper.findNotesByNoteId(noteId);
-        if(notes == null){
-            return -1;
-        }else{
-            Integer userId = userService.getUseridByName(username);
-            if(notes.getUserId() != userId){
-                return -2;
+    public String updateNotes(Integer noteId, String noteTitle, String noteDescription, String username){
+        Integer updateCount = 0;
+        try{
+            Notes notes = notesMapper.findNotesByNoteId(noteId);
+            if(notes == null){
+                return NOTE_NOT_FOUND;
+            }else{
+                Integer userId = userService.getUseridByName(username);
+                if(notes.getUserId() != userId){
+                    return NOTE_NOT_FOUND_FOR_USER;
+                }
+                notes.setNoteTitle(noteTitle);
+                notes.setNoteDescription(noteDescription);
+                 updateCount  = notesMapper.updateNotes(notes);
             }
-            notes.setNoteTitle(noteTitle);
-            notes.setNoteDescription(noteDescription);
+        }catch (Exception ex){
+            return NOTE_UPDATE_ERROR_GENERIC;
         }
-        return notesMapper.updateNotes(notes);
+        return (updateCount > 0)?SUCCESS:NOTE_NO_UPDATE;
     }
 
     //Delete notes by Id
@@ -59,10 +70,24 @@ public class NotesService {
         return notesMapper.getNotesByTitle(notesTitle);
     }
 
+    // Check if note with Title exists
+    public Boolean isDuplicateNote(String notesTitle){
+        return (null != getNotesByTitle(notesTitle));
+    }
+
     //Save notes
-    public Integer insertNote(String noteTitle, String noteDescription, String username){
-        Integer userId = userService.getUseridByName(username);
-        Notes notes = new Notes(null,noteTitle,noteDescription,userId);
-        return notesMapper.insertNote(notes);
+    public String insertNote(String noteTitle, String noteDescription, String username){
+        try{
+            if(isDuplicateNote(noteTitle)){
+                return NOTE_DUPLICATE_ERROR;
+            }
+            Integer userId = userService.getUseridByName(username);
+            Notes notes = new Notes(null,noteTitle,noteDescription,userId);
+            Integer noteId = notesMapper.insertNote(notes);
+        }catch (Exception ex){
+            return NOTE_INSERT_ERROR_GENERIC;
+        }
+
+        return SUCCESS;
     }
 }
