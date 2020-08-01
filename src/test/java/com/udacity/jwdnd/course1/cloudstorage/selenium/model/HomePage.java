@@ -17,6 +17,14 @@ public class HomePage {
     @FindBy(id = "logout-btn")
     private WebElement logoutBtn;
 
+    @FindBy(id = "error-msg")
+    private WebElement errorMessage;
+
+
+    @FindBy(id = "success-msg")
+    private WebElement successMessage;
+
+
     @FindBy(id = "nav-files-tab")
     private WebElement navFilesTab;
 
@@ -116,14 +124,16 @@ public class HomePage {
         logoutBtn.click();
     }
 
-    //File upload
-
-
-    // Notes
-    public void navigateToNotes(){
-        navNotesTab.click();
+    public String getErrorMessage(){
+        return errorMessage.getText();
     }
 
+    public String getSuccessMessage(){
+        return successMessage.getText();
+    }
+
+
+    //File upload
     public void navigateToFiles(){
         navFilesTab.click();
     }
@@ -135,6 +145,58 @@ public class HomePage {
     public void uploadFile(){
         fileSubmit.click();
     }
-    // Credentials
 
+    // Notes
+    public void navigateToNotes(){
+        navNotesTab.click();
+    }
+
+    public void clickAddNoteBtn(){
+        addNoteBtn.click();
+    }
+
+    public void setNoteTitle(String title){
+        noteTitle.sendKeys(title);
+    }
+
+    public void setNoteDescription(String desc){
+        noteDescription.sendKeys(desc);
+    }
+
+    public String getNoteTitle(){
+        return noteTitleText.getText();
+    }
+
+    // Credentials
+    public void navigateToCredentials(){
+        navCredentialsTab.click();
+    }
+
+    public void clickAddCredBtn(){
+        addCredBtn.click();
+    }
+
+    public void setCredentialUrl(String url){
+        credentialUrl.sendKeys(url);
+    }
+
+    public void setCredentialUsername(String username){
+        credentialUsername.sendKeys(username);
+    }
+
+    public void setCredentialPassword(String pwd){
+        credentialPassword.sendKeys(pwd);
+    }
+
+    public String getCredentialPassword(){
+        return credentialPassword.getText();
+    }
+
+    public String getCredentialUsername(){
+        return credentialUsername.getText();
+    }
+
+    public String getCredentialUrl(){
+        return credentialPassword.getText();
+    }
 }

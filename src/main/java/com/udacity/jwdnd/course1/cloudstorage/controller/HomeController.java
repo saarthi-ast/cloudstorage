@@ -5,6 +5,7 @@ import com.udacity.jwdnd.course1.cloudstorage.model.Credentials;
 import com.udacity.jwdnd.course1.cloudstorage.model.Files;
 import com.udacity.jwdnd.course1.cloudstorage.model.Notes;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialsService;
+import com.udacity.jwdnd.course1.cloudstorage.services.EncryptionService;
 import com.udacity.jwdnd.course1.cloudstorage.services.FilesService;
 import com.udacity.jwdnd.course1.cloudstorage.services.NotesService;
 import org.springframework.core.io.InputStreamResource;
@@ -23,23 +24,40 @@ import java.util.List;
 import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.*;
 
 @Controller
-public class HomeController {
+public class HomeController /*implements HandlerExceptionResolver */{
 
     private FilesService filesService;
     private NotesService notesService;
     private CredentialsService credentialsService;
+    private EncryptionService encryptionService;
 
-    public HomeController(FilesService filesService, NotesService notesService, CredentialsService credentialsService) {
+    public HomeController(FilesService filesService, NotesService notesService,
+                          CredentialsService credentialsService, EncryptionService encryptionService) {
         this.filesService = filesService;
         this.notesService = notesService;
         this.credentialsService = credentialsService;
+        this.encryptionService = encryptionService;
     }
 
     @GetMapping(HOME_MAPPING)
     public String showHomePage(@ModelAttribute(APPLICATION_FORM) ApplicationForm applicationForm,
                                Model model, Authentication authentication) {
         populateModel(model, authentication);
-        applicationForm.setActiveTab(FILES_TAB);
+        model.addAttribute(ACTIVE_TAB,FILES_TAB);
+        return HOME;
+    }
+
+    @GetMapping(CREDENTIAL_MAPPING)
+    public String getCredentialsForUser(Model model, Authentication authentication) {
+        populateModel(model, authentication);
+        model.addAttribute(ACTIVE_TAB,CREDENTIALS_TAB);
+        return HOME;
+    }
+
+    @GetMapping(NOTES_MAPPING)
+    public String getNotesForUser(Model model, Authentication authentication) {
+        populateModel(model, authentication);
+        model.addAttribute(ACTIVE_TAB,NOTES_TAB);
         return HOME;
     }
 
@@ -54,7 +72,7 @@ public class HomeController {
             model.addAttribute(ERROR_MESSAGE,uploadStatus);
         }
         populateModel(model, authentication);
-        applicationForm.setActiveTab(FILES_TAB);
+        model.addAttribute(ACTIVE_TAB,FILES_TAB);
         return HOME;
     }
 
@@ -74,12 +92,9 @@ public class HomeController {
             model.addAttribute(ERROR_MESSAGE,status);
         }
         populateModel(model, authentication);
-        applicationForm.setActiveTab(NOTES_TAB);
+        model.addAttribute(ACTIVE_TAB,NOTES_TAB);
         return HOME;
     }
-
-    // public String saveCredentials(@RequestParam("credentialId") Integer credentialId,@RequestParam("url") String url,@RequestParam("username") String username,
-    //                             @RequestParam("password") String password, Model model, Authentication authentication) {
 
     @PostMapping(CREDENTIAL_MAPPING)
     public String saveCredentials(@ModelAttribute(APPLICATION_FORM) ApplicationForm applicationForm,
@@ -97,22 +112,9 @@ public class HomeController {
             model.addAttribute(ERROR_MESSAGE,status);
         }
         populateModel(model, authentication);
-        applicationForm.setActiveTab(CREDENTIALS_TAB);
+        model.addAttribute(ACTIVE_TAB,CREDENTIALS_TAB);
         return HOME;
     }
-
-//    @GetMapping(UPLOAD_MAPPING)
-//    public String getFilesForUser(Model model, Authentication authentication) {
-//        populateModel(model, authentication);
-//        return HOME;
-//    }
-
-//    @GetMapping("/notes")
-//    public String getNotesForUser(Model model, Authentication authentication) {
-//        populateModel(model, authentication);
-//
-//        return HOME;
-//    }
 
     @GetMapping(DOWNLOAD_FILE_MAPPING)
     public ResponseEntity<Object> downloadFile(@PathVariable String filename, Model model, Authentication authentication) {
@@ -135,18 +137,28 @@ public class HomeController {
     @GetMapping(DELETE_FILE_MAPPING)
     public String deleteFile(@ModelAttribute(APPLICATION_FORM) ApplicationForm applicationForm,
                              @PathVariable String filename, Model model, Authentication authentication) {
-        filesService.deleteFileByName(filename, authentication.getName());
+        String status = filesService.deleteFileByName(filename, authentication.getName());
         populateModel(model, authentication);
-        applicationForm.setActiveTab(FILES_TAB);
+        if(SUCCESS.equals(status)){
+            model.addAttribute(SUCCESS_MESSAGE,FILE_DELETE_SUCCESS);
+        }else {
+            model.addAttribute(ERROR_MESSAGE,status);
+        }
+        model.addAttribute(ACTIVE_TAB,FILES_TAB);
         return HOME;
     }
 
     @GetMapping(DELETE_NOTE_MAPPING)
     public String deleteNote(@ModelAttribute(APPLICATION_FORM) ApplicationForm applicationForm,
                              @PathVariable Integer noteId, Model model, Authentication authentication) {
-        notesService.deleteNotesById(noteId, authentication.getName());
+        String status = notesService.deleteNotesById(noteId, authentication.getName());
         populateModel(model, authentication);
-        applicationForm.setActiveTab(NOTES_TAB);
+        if(SUCCESS.equals(status)){
+            model.addAttribute(SUCCESS_MESSAGE,NOTE_DELETE_SUCCESS);
+        }else {
+            model.addAttribute(ERROR_MESSAGE,status);
+        }
+        model.addAttribute(ACTIVE_TAB,NOTES_TAB);
         return HOME;
     }
 
@@ -154,9 +166,14 @@ public class HomeController {
     public String deleteCredential(@PathVariable Integer credentialId,
                                    @ModelAttribute(APPLICATION_FORM) ApplicationForm applicationForm ,
                                    Model model, Authentication authentication) {
-        credentialsService.deleteCredentialsByIdAndUserId(credentialId, authentication.getName());
+        String status = credentialsService.deleteCredentialsByIdAndUserId(credentialId, authentication.getName());
         populateModel(model, authentication);
-        applicationForm.setActiveTab(CREDENTIALS_TAB);
+        model.addAttribute(ACTIVE_TAB,CREDENTIALS_TAB);
+        if(SUCCESS.equals(status)){
+            model.addAttribute(SUCCESS_MESSAGE,CREDENTIAL_DELETE_SUCCESS);
+        }else {
+            model.addAttribute(ERROR_MESSAGE,status);
+        }
         return HOME;
     }
 
@@ -170,7 +187,16 @@ public class HomeController {
         if(null == fileNames || null == notesList || null == credentialsList){
             model.addAttribute(ERROR_MESSAGE,GET_DETAILS_ERROR_GENERIC);
         }
-
+        model.addAttribute("encryptionService",encryptionService);
         return model;
     }
+//
+//    @Override
+//    public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object object, Exception exc) {
+//        ModelAndView modelAndView = new ModelAndView("file");
+//        if (exc instanceof MaxUploadSizeExceededException) {
+//            modelAndView.getModel().put("message", "File size exceeds limit!");
+//        }
+//        return modelAndView;
+//    }
 }

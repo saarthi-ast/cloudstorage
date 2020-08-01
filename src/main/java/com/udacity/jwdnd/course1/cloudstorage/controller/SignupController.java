@@ -1,6 +1,5 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
-import com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.stereotype.Controller;
@@ -8,6 +7,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.*;
 
 @Controller
 public class SignupController {
@@ -17,32 +18,32 @@ public class SignupController {
         this.userService = userService;
     }
 
-    @GetMapping("/signup")
-    public String showSignupPage(@ModelAttribute("userForm") User user, Model model) {
-        return "signup";
+    @GetMapping(SIGNUP_MAPPING)
+    public String showSignupPage(@ModelAttribute(USER_FORM) User user, Model model) {
+        return SIGNUP;
     }
 
-    @PostMapping("/signup")
-    public String signup(@ModelAttribute("userForm") User user, Model model) {
+    @PostMapping(SIGNUP_MAPPING)
+    public String signup(@ModelAttribute(USER_FORM) User user, Model model) {
         String signupError = null;
         if (!userService.isUsernameAvailable(user.getUsername())) {
-            signupError = "This username is already in use. Please try with a different username.";
-            model.addAttribute("userForm", user);
-            model.addAttribute("firstname", user.getFirstname());
-            model.addAttribute("lastname", user.getLastname());
-            model.addAttribute("signupError", signupError);
-            return "signup";
+            signupError = SIGNUP_DUPLICATE_USERNAME;
+            model.addAttribute(USER_FORM, user);
+            model.addAttribute(FIRSTNAME, user.getFirstname());
+            model.addAttribute(LASTNAME, user.getLastname());
+            model.addAttribute(SIGNUP_ERROR, signupError);
+            return SIGNUP;
         } else {
             Integer userId = userService.addUser(user);
             if (userId < 0) {
-                signupError = "The signup process could not be completed. Please try again in sometime.";
-                model.addAttribute("signupError", signupError);
-                return "signup";
+                signupError = SIGNUP_GENERIC_ERROR;
+                model.addAttribute(SIGNUP_ERROR, signupError);
+                return SIGNUP;
             }
             user.setFirstname(user.getUsername());
-            model.addAttribute("signupSuccess", "You successfully signed up! Please login to continue.");
-            model.addAttribute("userForm", user);
-            return "signup";
+            model.addAttribute(SIGNUP_SUCCESS, SIGNUP_SUCCESS_MSG);
+            model.addAttribute(USER_FORM, user);
+            return SIGNUP;
         }
     }
 }

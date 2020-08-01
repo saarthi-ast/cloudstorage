@@ -67,9 +67,14 @@ public class FilesService {
     }
 
     //delete file
-    public Integer deleteFileByName(String filename, String username) {
-        Integer userId = userService.getUseridByName(username);
-        return filesMapper.deleteFileByNameAndUserId(filename,userId);
+    public String deleteFileByName(String filename, String username) {
+        try{
+            Integer userId = userService.getUseridByName(username);
+            Integer deleteCt = filesMapper.deleteFileByNameAndUserId(filename, userId);
+        }catch (Exception e){
+            return FILE_DELETE_ERROR;
+        }
+        return SUCCESS;
     }
 
     //check if filename already used

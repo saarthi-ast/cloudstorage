@@ -29,6 +29,10 @@ public interface CredentialsMapper {
     @Select("Select * from Credentials where url=#{url} and userId=#{userId}")
     Credentials findCredentialsByUrlAndUserId(String url, Integer userId);
 
+    // Select credentials based on url, username and userId
+    @Select("Select * from Credentials where url=#{url} and username=#{username} and userId=#{userId}")
+    Credentials findCredentialsByUrlAndUsernameAndUserId(String url,String username, Integer userId);
+
     // Insert credentials
     @Insert("Insert into Credentials (url, username, key, password, userId) " +
             "values (#{url}, #{username}, #{key}, #{password}, #{userId})")

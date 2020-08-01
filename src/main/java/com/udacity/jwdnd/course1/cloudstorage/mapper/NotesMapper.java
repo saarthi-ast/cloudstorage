@@ -12,8 +12,8 @@ public interface NotesMapper {
     List<Notes> getNotesByUserId(Integer userId);
 
     // Find notes for a given noteId
-    @Select("Select * from Notes where noteId=#{noteId}")
-    Notes findNotesByNoteId(Integer noteId);
+    @Select("Select * from Notes where noteId=#{noteId} and userId = #{userId}")
+    Notes findNotesByNoteIdAndUserId(Integer noteId, Integer userId);
 
     //Update notes
     @Update("Update Notes set noteTitle = #{noteTitle}, noteDescription = #{noteDescription} where noteId=#{noteId}")

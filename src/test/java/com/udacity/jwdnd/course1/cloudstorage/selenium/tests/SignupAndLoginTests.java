@@ -1,14 +1,14 @@
-package com.udacity.jwdnd.course1.cloudstorage;
+package com.udacity.jwdnd.course1.cloudstorage.selenium.tests;
 
 import com.udacity.jwdnd.course1.cloudstorage.selenium.model.LoginPage;
 import com.udacity.jwdnd.course1.cloudstorage.selenium.model.SignupPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -30,6 +30,7 @@ public class SignupAndLoginTests {
     private static String testLastName;
     private SignupPage signupPage;
     private LoginPage loginPage;
+    private WebDriverWait wait;
     public static final String DUP_USR_ERROR = "This username is already in use. Please try with a different username.";
 
     @BeforeAll
@@ -51,6 +52,7 @@ public class SignupAndLoginTests {
 
     @BeforeEach
     public void beforeEach() {
+        wait = new WebDriverWait(driver, 100);
         signupPage = new SignupPage(driver);
         loginPage = new LoginPage(driver);
 
@@ -66,54 +68,57 @@ public class SignupAndLoginTests {
 
     @Test
     @Order(1)
-    public void testHomePageAccessWithoutLogin(){
+    public void testHomePageAccessWithoutLogin() {
         driver.get("http://localhost:8080/home");
-        WebDriverWait wait = new WebDriverWait(driver, 3);
-        WebElement loginUsername = wait.until(webDriver -> webDriver.findElement(By.id("inputUsername")));
+
+        WebElement loginUsername = wait.until(ExpectedConditions.elementToBeClickable(By.id("inputUsername")));
         assertNotNull(loginUsername);
-        assertThrows(TimeoutException.class, () ->  wait.until(webDriver -> webDriver.findElement(By.id("nav-files-tab"))));
     }
 
     @Test
     @Order(2)
     public void testSignup() {
         driver.get("http://localhost:8080/signup");
-        WebDriverWait wait = new WebDriverWait(driver, 3);
-        wait.until(webDriver -> webDriver.findElement(By.id("submit-btn")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("submit-btn")));
         populateAndSubmitSignup();
-        WebElement signupSuccess = wait.until(webDriver -> webDriver.findElement(By.id("success-msg")));
+        WebElement signupSuccess = wait.until(ExpectedConditions.elementToBeClickable(By.id("success-msg")));
         assertNotNull(signupSuccess);
         assertTrue(signupPage.getSuccessMsg().startsWith("You successfully signed up!"));
     }
 
     @Test
     @Order(4)
-    public void testDuplicateUserNameErrorOnSignup(){
+    public void testDuplicateUserNameErrorOnSignup() {
         driver.get("http://localhost:8080/signup");
-        WebDriverWait wait = new WebDriverWait(driver, 3);
-        wait.until(webDriver -> webDriver.findElement(By.id("submit-btn")));
+        wait.until(ExpectedConditions.elementToBeClickable(By.id("submit-btn")));
         populateAndSubmitSignup();
-        WebElement signupError = wait.until(webDriver -> webDriver.findElement(By.id("error-msg")));
+        WebElement signupError = wait.until(ExpectedConditions.elementToBeClickable(By.id("error-msg")));
         assertNotNull(signupError);
         assertEquals(DUP_USR_ERROR, signupPage.getErrorMessage());
     }
 
     @Test
     @Order(3)
-    public void testLoginAndLogout(){
-        driver.get("http://localhost:8080/login");
-        WebDriverWait wait = new WebDriverWait(driver, 3);
-        wait.until(webDriver -> webDriver.findElement(By.id("login-submit-btn")));
-        loginPage.setInputUsername(testUsr);
-        loginPage.setInputPassword(testPwd);
-        loginPage.login();
-        WebElement filesTab = wait.until(webDriver -> webDriver.findElement(By.id("nav-files-tab")));
-        assertNotNull(filesTab);
-        WebElement logoutBtn = wait.until(webDriver -> webDriver.findElement(By.id("logout-btn")));
-        logoutBtn.click();
-        assertEquals("You have been logged out",loginPage.getLogoutMsg());
-        driver.get("http://localhost:8080/home");
-        assertThrows(TimeoutException.class, () ->  wait.until(webDriver -> webDriver.findElement(By.id("nav-files-tab"))));
+    public void testLoginAndLogout() {
+        try{
+            driver.get("http://localhost:8080/login");
+            wait.until(ExpectedConditions.elementToBeClickable(By.id("login-submit-btn")));
+            loginPage.setInputUsername(testUsr);
+            loginPage.setInputPassword(testPwd);
+            loginPage.login();
+            WebElement filesTab = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-files-tab")));
+            assertNotNull(filesTab);
+            WebElement logoutBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("logout-btn")));
+            Thread.sleep(1000);
+            logoutBtn.click();
+            wait.until(ExpectedConditions.elementToBeClickable(By.id("logout-msg")));
+            assertEquals("You have been logged out", loginPage.getLogoutMsg());
+            driver.get("http://localhost:8080/home");
+            WebElement loginUsername = wait.until(ExpectedConditions.elementToBeClickable(By.id("inputUsername")));
+            assertNotNull(loginUsername);
+        }catch (Exception e){
+            Assertions.fail("Error occurred while testing testLoginAndLogout");
+        }
     }
 
 }

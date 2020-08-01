@@ -19,36 +19,46 @@
     <div id="contentDiv" style="clear: right;">
         <nav style="clear: right;">
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                <a class="nav-item nav-link active" id="nav-files-tab" data-toggle="tab" href="#nav-files" role="tab"
+                <a class="nav-item nav-link "
+                   th:classappend="${#strings.equals(activeTab, 'nav-files-tab') ? 'active' : ''}" id="nav-files-tab"
+                   data-toggle="tab" href="#nav-files" role="tab"
                    aria-controls="nav-files" aria-selected="true" onclick="hideMessages()">Files</a>
-                <a class="nav-item nav-link" id="nav-notes-tab" data-toggle="tab" href="#nav-notes" role="tab"
+                <a class="nav-item nav-link" id="nav-notes-tab"
+                   th:classappend="${#strings.equals(activeTab, 'nav-notes-tab') ? 'active' : ''}" data-toggle="tab"
+                   href="#nav-notes" role="tab"
                    aria-controls="nav-notes" aria-selected="false" onclick="hideMessages()">Notes</a>
-                <a class="nav-item nav-link" id="nav-credentials-tab" data-toggle="tab" href="#nav-credentials"
+                <a class="nav-item nav-link" id="nav-credentials-tab"
+                   th:classappend="${#strings.equals(activeTab, 'nav-credentials-tab') ? 'active' : ''}"
+                   data-toggle="tab" href="#nav-credentials"
                    role="tab" aria-controls="nav-credentials" aria-selected="false"
                    onclick="hideMessages()">Credentials</a>
             </div>
         </nav>
-        <div th:if="${successMessage}" id="success-msg" style="padding:5px; margin:5px;" class="alert alert-dark">
+        <div th:if="${successMessage}" th:text="${successMessage}" id="success-msg" style="padding:5px; margin:5px;"
+             class="alert alert-dark">
             Your changes were saved successfully.
         </div>
-        <div th:if="${errorMessage}" id="error-msg" style="padding:5px; margin:5px;" class="alert alert-danger">
-            <span th:text="${errorMessage}">Your changes could not be saved. Please try again later.</span>
+        <div th:if="${errorMessage}" th:text="${errorMessage}" id="error-msg" style="padding:5px; margin:5px;"
+             class="alert alert-danger">
+            Your changes could not be saved. Please try again later.
         </div>
         <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
+            <div class="tab-pane fade "
+                 th:classappend="${#strings.equals(activeTab, 'nav-files-tab') ? 'show active' : ''}" id="nav-files"
+                 role="tabpanel" aria-labelledby="nav-files-tab">
                 <form action="#" th:action="@{/upload}" th:object="${applicationForm}" enctype="multipart/form-data"
                       method="POST">
-                    <input type="hidden" id="activeTab" name="activeTab" th:field="*{activeTab}">
                     <div class="container">
                         <div class="row" style="margin: 1em;">
                             <div class="col-sm-2">
                                 <label for="fileUpload">Upload a New File:</label>
                             </div>
                             <div class="col-sm-6">
-                                <input type="file" class="form-control-file" id="fileUpload" name="fileUpload">
+                                <input type="file" onclick="hideMessages()"  class="form-control-file"
+                                       id="fileUpload" name="fileUpload">
                             </div>
                             <div class="col-sm-4">
-                                <button id="file-submit-btn" type="submit" class="btn btn-dark">Upload</button>
+                                <button onclick="validateFile()" id="file-submit-btn" type="submit" class="btn btn-dark">Upload</button>
                             </div>
                         </div>
                     </div>
@@ -76,7 +86,9 @@
                     </table>
                 </div>
             </div>
-            <div class="tab-pane fade" id="nav-notes" role="tabpanel" aria-labelledby="nav-notes-tab">
+            <div class="tab-pane fade"
+                 th:classappend="${#strings.equals(activeTab, 'nav-notes-tab') ? 'show active' : ''}" id="nav-notes"
+                 role="tabpanel" aria-labelledby="nav-notes-tab">
                 <button id="add-note-btn" style="margin: 0.25em;" type="button" class="btn btn-info float-right"
                         onclick="showNoteModal()">
                     + Add a New Note
@@ -94,18 +106,20 @@
                         <tbody>
                         <tr th:each="note: ${notesList}">
                             <td>
-                                <button th:id="'note_edit_'+${note.getNoteTitle()}" type="button"
-                                        class="btn btn-success"
-                                        th:attr="onclick=|showNoteModal('${note.getNoteId()}','${note.getNoteTitle()}','${note.getNoteDescription()}')|">
-                                    Edit
+
+                                <button th:id="'note_edit_'+${note.getNoteTitle()}"
+                                        th:onclick="showNoteModal([[${note}]])" type="button"
+                                        class="btn btn-success edit-note">Edit
                                 </button>
                                 <a th:id="'note_del_'+${note.getNoteTitle()}" class="btn btn-danger"
                                    th:href="@{/deleteNote/}+${note.getNoteId()}">Delete</a>
                             </td>
-                            <th th:id="'noteTitle_'+${note.getNoteTitle()}" th:text="${note.getNoteTitle()}" scope="row">
+                            <th th:id="'noteTitle_'+${note.getNoteTitle()}" th:text="${note.getNoteTitle()}"
+                                scope="row">
                                 Example Note Title
                             </th>
-                            <td th:id="'noteDesc_'+${note.getNoteTitle()}" th:text="${note.getNoteDescription()}">Example
+                            <td th:id="'noteDesc_'+${note.getNoteTitle()}" th:text="${note.getNoteDescription()}">
+                                Example
                                 Note Description
                             </td>
                         </tr>
@@ -155,7 +169,9 @@
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="nav-credentials" role="tabpanel" aria-labelledby="nav-credentials-tab">
+            <div class="tab-pane fade"
+                 th:classappend="${#strings.equals(activeTab, 'nav-credentials-tab') ? 'show active' : ''}"
+                 id="nav-credentials" role="tabpanel" aria-labelledby="nav-credentials-tab">
                 <button id="add-cred-btn" style="margin: 0.25em;" type="button" class="btn btn-info float-right"
                         onclick="showCredentialModal()">
                     + Add a New Credential
@@ -176,7 +192,8 @@
                             <td>
                                 <button th:id="'cred_edit_'+${cred.getUrl()}" type="button" class="btn btn-success"
                                         th:attr="onclick=|showCredentialModal('${cred.getCredentialId()}','${cred.getUrl()}',
-                                        '${cred.getUsername()}','${cred.getEditPwd()}')|">Edit
+                                        '${cred.getUsername()}','${encryptionService.decryptValue(cred.password, cred.key)}')|">
+                                    Edit
                                 </button>
                                 <a th:id="'cred_del_'+${cred.getUrl()}" class="btn btn-danger"
                                    th:href="@{/deleteCredential/}+${cred.getCredentialId()}">Delete</a>
@@ -253,31 +270,13 @@
 
 <!--For opening the note modal-->
 <script type="text/javascript">
-            //For selecting the active div
-            $(document).ready(function(){
-            var activeTab = $('#activeTab').val();
-            activeTab = activeTab ? activeTab : 'nav-files-tab';
-            var currentTab = $("a.nav-item.nav-link.active")[0].id;
-            console.log('activeTab-'+activeTab+' && currentTab-'+currentTab);
-            if(activeTab != currentTab){
-                var activeDiv = activeTab.substr(0, activeTab.length-4);
-                var currentDiv = currentTab.substr(0, currentTab.length-4);
-                console.log('activeDiv-'+activeDiv+' && currentDiv-'+currentDiv);
-                $('#'+currentDiv).attr("class","tab-pane fade ");
-                $('#'+currentTab).attr("class","nav-item nav-link");
-
-                $('#'+activeDiv).attr("class","tab-pane fade active show");
-                $('#'+activeTab).attr("class","nav-item nav-link active show");
-            }
-            });
-
             // For opening the note modal
-            function showNoteModal(noteId, noteTitle, noteDescription) {
+            function showNoteModal(note) {
                 $('#success-msg').hide();
                 $('#error-msg').hide();
-                $('#note-id').val(noteId ? noteId : '');
-                $('#note-title').val(noteTitle ? noteTitle : '');
-                $('#note-description').val(noteDescription ? noteDescription : '');
+                $('#note-id').val(note ? note.noteId : '');
+                $('#note-title').val(note ? note.noteTitle : '');
+                $('#note-description').val(note ? note.noteDescription : '');
                 $('#noteModal').modal('show');
             }
 
@@ -294,9 +293,27 @@
 
             // For clearing success/error messages
             function hideMessages(){
-                $('#success-msg').hide();
-                $('#error-msg').hide();
+
+                if($('#success-msg')){
+                    $('#success-msg').hide();
+                }
+                 if($('#error-msg')){
+                    $('#error-msg').hide();
+                }
+
             }
+
+            function validateFile(){
+            var file = $('#fileUpload');
+                if(file.files[0].size > 1048576){
+                    $('#error-msg').html("The uploaded file exceeds the allowed file size of 1MB. Please upload a smaller file") ;
+                    $('#error-msg').show()
+                    file.value = "";
+                }
+                return false;
+            }
+
+
 
 
 

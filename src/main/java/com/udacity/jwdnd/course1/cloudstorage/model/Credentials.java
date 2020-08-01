@@ -8,17 +8,8 @@ public class Credentials {
     private String key;
     private String password;
     private Integer userId;
-    private String editPwd;
 
     public Credentials() {
-    }
-
-    public String getEditPwd() {
-        return editPwd;
-    }
-
-    public void setEditPwd(String editPwd) {
-        this.editPwd = editPwd;
     }
 
     public Integer getCredentialId() {

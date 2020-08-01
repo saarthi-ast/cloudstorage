@@ -4,7 +4,6 @@ public class ApplicationForm {
     private Credentials credentials;
     private Files files;
     private Notes notes;
-    private String activeTab;
 
     public ApplicationForm() {
         this.credentials = new Credentials();
@@ -12,19 +11,10 @@ public class ApplicationForm {
         this.notes = new Notes();
     }
 
-    public ApplicationForm(Credentials credentials, Files files, Notes notes, String activeTab) {
+    public ApplicationForm(Credentials credentials, Files files, Notes notes) {
         this.credentials = credentials;
         this.files = files;
         this.notes = notes;
-        this.activeTab = activeTab;
-    }
-
-    public String getActiveTab() {
-        return activeTab;
-    }
-
-    public void setActiveTab(String activeTab) {
-        this.activeTab = activeTab;
     }
 
     public Credentials getCredentials() {

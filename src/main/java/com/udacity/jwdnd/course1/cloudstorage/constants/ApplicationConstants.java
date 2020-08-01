@@ -4,6 +4,8 @@ package com.udacity.jwdnd.course1.cloudstorage.constants;
 public interface ApplicationConstants {
     String HOME_MAPPING = "/home";
     String UPLOAD_MAPPING = "/upload";
+    String SIGNUP_MAPPING = "/signup";
+    String LOGIN = "login";
     String HOME = "home";
     String UPLOAD = "upload";
     String NOTES_MAPPING = "/notes";
@@ -22,7 +24,7 @@ public interface ApplicationConstants {
     String FILE_UPLOAD_SUCCESS = "Your file was uploaded successfully.";
     String FILE_UPLOAD_FAILURE= "An error occurred while saving your file. Please try again after sometime.";
     String FILE_UPLOAD_ERROR_GENERIC = "An error occurred while saving your file. Please try again after sometime.";
-    String FILE_UPLOAD_SIZE_ERROR = "The uploaded file exceeds the allowed file size. Please upload a smaller file";
+    String FILE_UPLOAD_SIZE_ERROR = "The uploaded file exceeds the allowed file size of 1MB. Please upload a smaller file";
     String FILE_UPLOAD_DUPLICATE_ERROR = "Filename is already used. Please use a different file.";
     String NOTE_INSERT_ERROR_GENERIC = "An error occurred while saving your note. Please try again after sometime.";
     String NOTE_DUPLICATE_ERROR = "A note with that Title already exists. Please use a different Title";
@@ -38,4 +40,24 @@ public interface ApplicationConstants {
     String ERROR_MESSAGE = "errorMessage";
     String SUCCESS_MESSAGE = "successMessage";
     String APPLICATION_FORM = "applicationForm";
+    String ACTIVE_TAB = "activeTab";
+    String FILE_DELETE_ERROR = "An error occurred while deleting the file. Please try again later.";
+    Object FILE_DELETE_SUCCESS = "File deleted successfully.";
+    Object NOTE_DELETE_SUCCESS = "Note deleted successfully.";
+    Object CREDENTIAL_DELETE_SUCCESS = "Credential deleted successfully.";
+    String NOTE_DELETE_ERROR = "An error occurred while deleting the note. Please try again later.";
+    String CREDENTIAL_DELETE_ERROR = "An error occurred while deleting the credential. Please try again later.";
+    String DUPLICATE_CREDENTIAL_ERROR = "A credential for that URL and username already exists.";
+    String CREDENTIAL_ZERO_DELETE = "No credential was deleted.";
+    String NOTE_NO_DELETE = "No note was deleted.";
+    String SIGNUP = "signup";
+    String SIGNUP_DUPLICATE_USERNAME = "This username is already in use. Please try with a different username.";
+    String SIGNUP_GENERIC_ERROR = "The signup process could not be completed. Please try again in sometime.";
+    String SIGNUP_ERROR = "signupError";
+    String SIGNUP_SUCCESS = "signupSuccess";
+    String SIGNUP_SUCCESS_MSG = "You successfully signed up! Please login to continue.";
+    String USER_FORM = "userForm";
+    String FIRSTNAME = "firstname";
+    String LASTNAME = "lastname";
+    String LOGIN_MAPPING = "/login";
 }
