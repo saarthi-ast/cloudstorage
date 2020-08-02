@@ -88,7 +88,6 @@ public class FileManagementTests {
 
     private void signupAndLogin() {
         driver.get("http://localhost:8080/signup");
-
         wait.until(ExpectedConditions.elementToBeClickable(By.id("submit-btn")));
         signupPage.setFirstname(testFirstName);
         signupPage.setLastname(testLastName);
@@ -148,9 +147,6 @@ public class FileManagementTests {
         signupAndLogin();
         wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-files-tab")));
         try {
-//            homePage.addFile(file.getPath());
-//            Thread.sleep(1000);
-//            homePage.uploadFile();
             WebElement filename = wait.until(ExpectedConditions.elementToBeClickable(By.id("filename_" + file.getName())));
             WebElement deleteFile = wait.until(ExpectedConditions.elementToBeClickable(By.id("file_del_" + file.getName())));
            Thread.sleep(1000);
@@ -174,7 +170,7 @@ public class FileManagementTests {
             try {
                 FileWriter writer = new FileWriter(file);
                 StringBuffer buffer = new StringBuffer("Test data for " + file.getPath());
-                while (buffer.length() < 1048576) {
+                while (buffer.length() < MAX_FILE_SIZE) {
                     buffer = buffer.append(buffer);
                 }
                 writer.write(buffer.toString());

@@ -58,7 +58,7 @@
                                        id="fileUpload" name="fileUpload">
                             </div>
                             <div class="col-sm-4">
-                                <button onclick="validateFile()" id="file-submit-btn" type="submit" class="btn btn-dark">Upload</button>
+                                <button id="file-submit-btn" type="submit" class="btn btn-dark">Upload</button>
                             </div>
                         </div>
                     </div>
@@ -302,20 +302,6 @@
                 }
 
             }
-
-            function validateFile(){
-            var file = $('#fileUpload');
-                if(file.files[0].size > 1048576){
-                    $('#error-msg').html("The uploaded file exceeds the allowed file size of 1MB. Please upload a smaller file") ;
-                    $('#error-msg').show()
-                    file.value = "";
-                }
-                return false;
-            }
-
-
-
-
 
 </script>
 </body>

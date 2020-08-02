@@ -21,15 +21,16 @@ public interface ApplicationConstants {
     String NOTES_TAB = "nav-notes-tab";
     String CREDENTIALS_TAB = "nav-credentials-tab";
     String SUCCESS = "SUCCESS";
+    Integer MAX_FILE_SIZE = 2097152;
     String FILE_UPLOAD_SUCCESS = "Your file was uploaded successfully.";
     String FILE_UPLOAD_FAILURE= "An error occurred while saving your file. Please try again after sometime.";
     String FILE_UPLOAD_ERROR_GENERIC = "An error occurred while saving your file. Please try again after sometime.";
-    String FILE_UPLOAD_SIZE_ERROR = "The uploaded file exceeds the allowed file size of 1MB. Please upload a smaller file";
+    String FILE_UPLOAD_SIZE_ERROR = "The uploaded file exceeds the allowed file size of "+((int)MAX_FILE_SIZE/1048576)+" MB. Please upload a smaller file";
     String FILE_UPLOAD_DUPLICATE_ERROR = "Filename is already used. Please use a different file.";
     String NOTE_INSERT_ERROR_GENERIC = "An error occurred while saving your note. Please try again after sometime.";
     String NOTE_DUPLICATE_ERROR = "A note with that Title already exists. Please use a different Title";
     String NOTE_NOT_FOUND = "Could not find a note corresponding to your request.";
-    String NOTE_NOT_FOUND_FOR_USER = "Could not find any existing note corresponding to your request.";
+    String GENERIC_ERROR = "An error occurred while processing your request. Please try again later.";
     String NOTE_UPDATE_ERROR_GENERIC = "An error occurred while saving your note. Please try again after sometime.";
     String NOTE_NO_UPDATE = "There were no changes done to your note.";
     String CREDENTIAL_SAVE_ERROR = "An error occurred while saving credentials. Please try again after sometime.";
@@ -60,4 +61,6 @@ public interface ApplicationConstants {
     String FIRSTNAME = "firstname";
     String LASTNAME = "lastname";
     String LOGIN_MAPPING = "/login";
+    String HTTP_METHOD_NOT_SUPPORTED = "This http method is not supported for the given operation.";
+    String NEGATIVE_USER_ID = "Negative userid returned by insert";
 }

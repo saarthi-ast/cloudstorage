@@ -30,7 +30,7 @@ public class FilesService {
             } else {
                 User loggedinUser = userService.getUserByName(username);
                 byte[] bytes = file.getBytes();
-                if(bytes.length > (1024*1024)){ // Max file upload size is 1 MB
+                if(bytes.length > MAX_FILE_SIZE){
                     return FILE_UPLOAD_SIZE_ERROR;
                 }
                 Files userFile = new Files(null,
