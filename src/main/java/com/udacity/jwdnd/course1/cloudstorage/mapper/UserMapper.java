@@ -6,19 +6,38 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
+/**
+ * The interface User mapper.
+ * @author Sudhir Tyagi
+ */
 @Mapper
 public interface UserMapper {
-    //find records with name
+    /**
+     * Gets user by name.
+     *
+     * @param username the username
+     * @return the user by name
+     */
     @Select("Select * from users where username=#{username}")
     User getUserByName(String username);
 
-    //insert new user
+    /**
+     * Insert user integer.
+     *
+     * @param user the user
+     * @return the integer
+     */
     @Insert("Insert into users (username,salt,password,firstname,lastname) values (" +
             "#{username},#{salt},#{password},#{firstname},#{lastname})")
     @Options(useGeneratedKeys = true,keyProperty = "userid")
     Integer insertUser(User user);
 
-    //find userid by name
+    /**
+     * Gets userid by name.
+     *
+     * @param username the username
+     * @return the userid by name
+     */
     @Select("Select userid from users where username=#{username}")
     Integer getUseridByName(String username);
 }

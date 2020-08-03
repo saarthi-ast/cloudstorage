@@ -9,19 +9,36 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.*;
 
+/**
+ * The type Files service.
+ * @author Sudhir Tyagi
+ */
 @Service
 public class FilesService {
-    private FilesMapper filesMapper;
-    private UserService userService;
+    private final FilesMapper filesMapper;
+    private final UserService userService;
 
+    /**
+     * Class constructor.
+     *
+     * @param filesMapper the files mapper
+     * @param userService the user service
+     */
     public FilesService(FilesMapper filesMapper, UserService userService) {
         this.filesMapper = filesMapper;
         this.userService = userService;
     }
 
-    //save file
+    /**
+     * Save file string.
+     *
+     * @param file     the file
+     * @param username the username
+     * @return the string
+     */
     public String saveFile(MultipartFile file, String username) {
         try {
             String filename = file.getOriginalFilename();
@@ -41,32 +58,52 @@ public class FilesService {
                 filesMapper.saveFile(userFile);
             }
         } catch (IOException e) {
-            //e.printStackTrace();
             return FILE_UPLOAD_ERROR_GENERIC;
         }
         return SUCCESS;
     }
 
-    //get file by name
+    /**
+     * Gets file by name.
+     *
+     * @param filename the filename
+     * @param username the username
+     * @return the file by name
+     */
     public Files getFileByName(String filename, String username) {
         Integer userId = userService.getUseridByName(username);
         return filesMapper.getFileByNameAndUserId(filename,userId);
     }
 
-    //get files for a user
+    /**
+     * Gets files by user name.
+     *
+     * @param username the username
+     * @return the files by user name
+     */
     public List<Files> getFilesByUserName(String username) {
         Integer userId = userService.getUseridByName(username);
         return filesMapper.getFilesByUserId(userId);
     }
 
-    //get list of filenames for a user
+    /**
+     * Get filenames by user name list.
+     *
+     * @param username the username
+     * @return the list
+     */
     public List<String> getFilenamesByUserName(String username){
         List<Files> userFiles = getFilesByUserName(username);
-        List<String> fileNames = userFiles.stream().map(x -> x.getFilename()).collect(Collectors.toList());
-        return fileNames;
+        return userFiles.stream().map(x -> x.getFilename()).collect(Collectors.toList());
     }
 
-    //delete file
+    /**
+     * Delete file by name string.
+     *
+     * @param filename the filename
+     * @param username the username
+     * @return the string
+     */
     public String deleteFileByName(String filename, String username) {
         try{
             Integer userId = userService.getUseridByName(username);
@@ -77,7 +114,12 @@ public class FilesService {
         return SUCCESS;
     }
 
-    //check if filename already used
+    /**
+     * Is file name used boolean.
+     *
+     * @param filename the filename
+     * @return the boolean
+     */
     public Boolean isFileNameUsed(String filename) {
         return (null != filesMapper.getFileByName(filename));
     }

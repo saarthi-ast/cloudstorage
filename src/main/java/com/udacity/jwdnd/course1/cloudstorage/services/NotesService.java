@@ -8,19 +8,34 @@ import java.util.List;
 
 import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.*;
 
+/**
+ * The type Notes service.
+ * @author Sudhir Tyagi
+ */
 @Service
 public class NotesService {
 
-    private NotesMapper notesMapper;
+    private final NotesMapper notesMapper;
+    private final UserService userService;
 
-    private UserService userService;
-
+    /**
+     * Class constructor.
+     *
+     * @param notesMapper the notes mapper
+     * @param userService the user service
+     */
     public NotesService(NotesMapper notesMapper, UserService userService) {
         this.notesMapper = notesMapper;
         this.userService = userService;
     }
 
-    // Select notes for a user
+    /**
+     * Gets notes by user name.
+     *
+     * @param username the username
+     * @return the notes by user name
+     */
+// Select notes for a user
     public List<Notes> getNotesByUserName(String username) {
         try {
             Integer userId = userService.getUseridByName(username);
@@ -30,9 +45,18 @@ public class NotesService {
         }
     }
 
-    //Update notes
+    /**
+     * Update notes string.
+     *
+     * @param noteId          the note id
+     * @param noteTitle       the note title
+     * @param noteDescription the note description
+     * @param username        the username
+     * @return the string
+     */
+//Update notes
     public String updateNotes(Integer noteId, String noteTitle, String noteDescription, String username) {
-        Integer updateCount = 0;
+        Integer updateCount;
         try {
             Integer userId = userService.getUseridByName(username);
             Notes notes = notesMapper.findNotesByNoteIdAndUserId(noteId,userId);
@@ -52,9 +76,16 @@ public class NotesService {
         return (updateCount > 0) ? SUCCESS : NOTE_NO_UPDATE;
     }
 
-    //Delete notes by Id
+    /**
+     * Delete notes by id string.
+     *
+     * @param noteId   the note id
+     * @param username the username
+     * @return the string
+     */
+//Delete notes by Id
     public String deleteNotesById(Integer noteId, String username) {
-        Integer deleteCt = 0;
+        Integer deleteCt;
         try {
             Integer userId = userService.getUseridByName(username);
             deleteCt = notesMapper.deleteNotesById(noteId, userId);
@@ -64,24 +95,37 @@ public class NotesService {
         return (deleteCt > 0) ? SUCCESS : NOTE_NO_DELETE;
     }
 
-//    //Delete notes by Title
-//    public Integer deleteNotesByTitle(String title, String username){
-//        Integer userId = userService.getUseridByName(username);
-//        Notes notes = notesMapper.getNotesByTitle(title);
-//        return notesMapper.deleteNotesById(notes.getNoteId(),userId);
-//    }
-
-    // Find notes by title
+    /**
+     * Gets notes by title.
+     *
+     * @param notesTitle the notes title
+     * @return the notes by title
+     */
+// Find notes by title
     public Notes getNotesByTitle(String notesTitle) {
         return notesMapper.getNotesByTitle(notesTitle);
     }
 
-    // Check if note with Title exists
+    /**
+     * Is duplicate note boolean.
+     *
+     * @param notesTitle the notes title
+     * @return the boolean
+     */
+// Check if note with Title exists
     public Boolean isDuplicateNote(String notesTitle) {
         return (null != getNotesByTitle(notesTitle));
     }
 
-    //Save notes
+    /**
+     * Insert note string.
+     *
+     * @param noteTitle       the note title
+     * @param noteDescription the note description
+     * @param username        the username
+     * @return the string
+     */
+//Save notes
     public String insertNote(String noteTitle, String noteDescription, String username) {
         try {
             if (isDuplicateNote(noteTitle)) {

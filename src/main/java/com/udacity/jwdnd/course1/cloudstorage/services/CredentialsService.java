@@ -10,35 +10,65 @@ import java.util.List;
 
 import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.*;
 
+/**
+ * The type Credentials service.
+ * @author Sudhir Tyagi
+ */
 @Service
 public class CredentialsService {
-    private CredentialsMapper credentialsMapper;
-    private UserService userService;
-    private EncryptionService encryptionService;
+    private final CredentialsMapper credentialsMapper;
+    private final UserService userService;
+    private final EncryptionService encryptionService;
 
+    /**
+     * Class constructor.
+     *
+     * @param credentialsMapper the credentials mapper
+     * @param userService       the user service
+     * @param encryptionService the encryption service
+     */
     public CredentialsService(CredentialsMapper credentialsMapper, UserService userService, EncryptionService encryptionService) {
         this.credentialsMapper = credentialsMapper;
         this.userService = userService;
         this.encryptionService = encryptionService;
     }
 
-    // Select All credentials for a user
+    /**
+     * Find credentials by username list.
+     *
+     * @param username the username
+     * @return the list
+     */
+// Select All credentials for a user
     public List<Credentials> findCredentialsByUsername(String username) {
         try {
             Integer userId = userService.getUseridByName(username);
-            List<Credentials> credentialsList = credentialsMapper.findCredentialsByUserId(userId);
-            return credentialsList;
+            return credentialsMapper.findCredentialsByUserId(userId);
         } catch (Exception e) {
             return null;
         }
     }
 
-    // Select credentials based on credentialId and userId
+    /**
+     * Find credentials by id and user id credentials.
+     *
+     * @param credentialId the credential id
+     * @param userId       the user id
+     * @return the credentials
+     */
+// Select credentials based on credentialId and userId
     public Credentials findCredentialsByIdAndUserId(Integer credentialId, Integer userId) {
         return credentialsMapper.findCredentialsByIdAndUserId(credentialId, userId);
     }
 
-    // Delete credentials based on credentialId and userId
+    /**
+     * Delete credentials by id and user id string.
+     *
+     * @param credentialId the credential id
+     * @param username     the username
+     * @return the string
+     */
+// Delete credentials based on credentialId and userId
     public String deleteCredentialsByIdAndUserId(Integer credentialId, String username) {
         try {
             Integer userId = userService.getUseridByName(username);
@@ -52,12 +82,27 @@ public class CredentialsService {
         return SUCCESS;
     }
 
-    // Check if a credential is already saved for the url and username
+    /**
+     * Is duplicate credential boolean.
+     *
+     * @param url      the url
+     * @param username the username
+     * @param userId   the user id
+     * @return the boolean
+     */
+// Check if a credential is already saved for the url and username
     public Boolean isDuplicateCredential(String url, String username, Integer userId) {
         return (null != credentialsMapper.findCredentialsByUrlAndUsernameAndUserId(url, username, userId));
     }
 
-    // Update credentials for a credentialId and userId
+    /**
+     * Update credentials by credential id and user id string.
+     *
+     * @param credentials the credentials
+     * @param username    the username
+     * @return the string
+     */
+// Update credentials for a credentialId and userId
     public String updateCredentialsByCredentialIdAndUserId(Credentials credentials, String username) {
         try {
             Integer userId = userService.getUseridByName(username);
@@ -84,12 +129,26 @@ public class CredentialsService {
         return SUCCESS;
     }
 
-    // Select credentials based on url and userId
+    /**
+     * Find credentials by url and user id credentials.
+     *
+     * @param url    the url
+     * @param userId the user id
+     * @return the credentials
+     */
+// Select credentials based on url and userId
     public Credentials findCredentialsByUrlAndUserId(String url, Integer userId) {
         return credentialsMapper.findCredentialsByUrlAndUserId(url, userId);
     }
 
-    // Insert credentials
+    /**
+     * Insert credentials string.
+     *
+     * @param credentials the credentials
+     * @param username    the username
+     * @return the string
+     */
+// Insert credentials
     public String insertCredentials(Credentials credentials, String username) {
         try {
             Integer userId = userService.getUseridByName(username);

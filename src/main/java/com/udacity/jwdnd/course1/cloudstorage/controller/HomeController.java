@@ -28,15 +28,29 @@ import java.io.ByteArrayInputStream;
 
 import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.*;
 
+
+/**
+ * The type Home controller.
+ * @author Sudhir Tyagi
+ */
 @Controller
 public class HomeController implements HandlerExceptionResolver {
     private static final Logger LOG = LoggerFactory.getLogger(HomeController.class);
-    private FilesService filesService;
-    private NotesService notesService;
-    private CredentialsService credentialsService;
-    private EncryptionService encryptionService;
-    private ApplicationUtils utils;
+    private final FilesService filesService;
+    private final NotesService notesService;
+    private final CredentialsService credentialsService;
+    private final EncryptionService encryptionService;
+    private final ApplicationUtils utils;
 
+    /**
+     * Class constructor.
+     *
+     * @param filesService       the files service
+     * @param notesService       the notes service
+     * @param credentialsService the credentials service
+     * @param encryptionService  the encryption service
+     * @param utils              the utils
+     */
     public HomeController(FilesService filesService, NotesService notesService,
                           CredentialsService credentialsService, EncryptionService encryptionService,
                           ApplicationUtils utils) {
@@ -47,6 +61,14 @@ public class HomeController implements HandlerExceptionResolver {
         this.utils = utils;
     }
 
+    /**
+     * Request mapping to show the home page.
+     *
+     * @param applicationForm the application form
+     * @param model           the model
+     * @param authentication  the authentication
+     * @return the string
+     */
     @GetMapping(HOME_MAPPING)
     public String showHomePage(@ModelAttribute(APPLICATION_FORM) ApplicationForm applicationForm,
                                Model model, Authentication authentication) {
@@ -56,6 +78,14 @@ public class HomeController implements HandlerExceptionResolver {
         return HOME;
     }
 
+    /**
+     * Request mapping to show the home page with Credentials tab selected.
+     *
+     * @param applicationForm the application form
+     * @param model           the model
+     * @param authentication  the authentication
+     * @return the credentials for user
+     */
     @GetMapping(CREDENTIAL_MAPPING)
     public String getCredentialsForUser(@ModelAttribute(APPLICATION_FORM) ApplicationForm applicationForm,Model model, Authentication authentication) {
         LOG.debug("credential page invoked");
@@ -64,6 +94,14 @@ public class HomeController implements HandlerExceptionResolver {
         return HOME;
     }
 
+    /**
+     * Request mapping to show the home page with Notes tab selected.
+     *
+     * @param applicationForm the application form
+     * @param model           the model
+     * @param authentication  the authentication
+     * @return the notes for user
+     */
     @GetMapping(NOTES_MAPPING)
     public String getNotesForUser(@ModelAttribute(APPLICATION_FORM) ApplicationForm applicationForm,Model model, Authentication authentication) {
         LOG.debug("note page invoked");
@@ -72,6 +110,15 @@ public class HomeController implements HandlerExceptionResolver {
         return HOME;
     }
 
+    /**
+     * Request mapping to upload file.
+     *
+     * @param files           the files
+     * @param applicationForm the application form
+     * @param model           the model
+     * @param authentication  the authentication
+     * @return the string
+     */
     @PostMapping(UPLOAD_MAPPING)
     public String uploadFile(@RequestParam("fileUpload") MultipartFile files,
                              @ModelAttribute(APPLICATION_FORM) ApplicationForm applicationForm,
@@ -88,6 +135,14 @@ public class HomeController implements HandlerExceptionResolver {
         return HOME;
     }
 
+    /**
+     * Request mapping to save notes.
+     *
+     * @param applicationForm the application form
+     * @param model           the model
+     * @param authentication  the authentication
+     * @return the string
+     */
     @PostMapping(NOTES_MAPPING)
     public String saveNotes(@ModelAttribute(APPLICATION_FORM) ApplicationForm applicationForm,
                             Model model, Authentication authentication) {
@@ -113,12 +168,20 @@ public class HomeController implements HandlerExceptionResolver {
         return HOME;
     }
 
+    /**
+     * Request mapping to save Credentials.
+     *
+     * @param applicationForm the application form
+     * @param model           the model
+     * @param authentication  the authentication
+     * @return the string
+     */
     @PostMapping(CREDENTIAL_MAPPING)
     public String saveCredentials(@ModelAttribute(APPLICATION_FORM) ApplicationForm applicationForm,
                                   Model model, Authentication authentication) {
         LOG.debug("credential addition requested");
         Credentials credentials = applicationForm.getCredentials();
-        String status = null;
+        String status;
         if (credentials.getCredentialId() == null) {
             LOG.debug("credential addition requested - insert");
             status  = credentialsService.insertCredentials(credentials, authentication.getName());
@@ -138,6 +201,14 @@ public class HomeController implements HandlerExceptionResolver {
         return HOME;
     }
 
+    /**
+     * Request mapping to Download file.
+     *
+     * @param filename       the filename
+     * @param model          the model
+     * @param authentication the authentication
+     * @return the response entity
+     */
     @GetMapping(DOWNLOAD_FILE_MAPPING)
     public ResponseEntity<Object> downloadFile(@PathVariable String filename, Model model, Authentication authentication) {
         LOG.info("File download requested - "+filename);
@@ -157,6 +228,15 @@ public class HomeController implements HandlerExceptionResolver {
         return responseEntity;
     }
 
+    /**
+     * Request mapping to Delete file.
+     *
+     * @param applicationForm the application form
+     * @param filename        the filename
+     * @param model           the model
+     * @param authentication  the authentication
+     * @return the string
+     */
     @GetMapping(DELETE_FILE_MAPPING)
     public String deleteFile(@ModelAttribute(APPLICATION_FORM) ApplicationForm applicationForm,
                              @PathVariable String filename, Model model, Authentication authentication) {
@@ -174,6 +254,15 @@ public class HomeController implements HandlerExceptionResolver {
         return HOME;
     }
 
+    /**
+     * Request mapping to delete note.
+     *
+     * @param applicationForm the application form
+     * @param noteId          the note id
+     * @param model           the model
+     * @param authentication  the authentication
+     * @return the string
+     */
     @GetMapping(DELETE_NOTE_MAPPING)
     public String deleteNote(@ModelAttribute(APPLICATION_FORM) ApplicationForm applicationForm,
                              @PathVariable Integer noteId, Model model, Authentication authentication) {
@@ -191,6 +280,15 @@ public class HomeController implements HandlerExceptionResolver {
         return HOME;
     }
 
+    /**
+     * Request mapping to delete credential.
+     *
+     * @param credentialId    the credential id
+     * @param applicationForm the application form
+     * @param model           the model
+     * @param authentication  the authentication
+     * @return the string
+     */
     @GetMapping(DELETE_CREDENTIAL_MAPPING)
     public String deleteCredential(@PathVariable Integer credentialId,
                                    @ModelAttribute(APPLICATION_FORM) ApplicationForm applicationForm ,

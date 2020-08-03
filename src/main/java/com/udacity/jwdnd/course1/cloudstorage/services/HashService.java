@@ -11,11 +11,22 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 
+/**
+ * The type Hash service.
+ * @author Sudhir Tyagi
+ */
 @Component
 public class HashService {
-    private Logger logger = LoggerFactory.getLogger(HashService.class);
+    private final Logger logger = LoggerFactory.getLogger(HashService.class);
 
-    //get hashed value
+    /**
+     * Gets hashed value.
+     *
+     * @param data the data
+     * @param salt the salt
+     * @return the hashed value
+     */
+//get hashed value
     public String getHashedValue(String data, String salt) {
         byte[] hashedValue = null;
 

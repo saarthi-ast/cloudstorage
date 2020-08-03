@@ -6,6 +6,7 @@ import com.udacity.jwdnd.course1.cloudstorage.selenium.model.SignupPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CredentialManagementTests {
     @LocalServerPort
     private Integer port;
-
+    private static JavascriptExecutor js;
     private static WebDriver driver;
     private static String testUsr;
     private static String testPwd;
@@ -42,6 +43,7 @@ public class CredentialManagementTests {
     public static void setup() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
+       js =  (JavascriptExecutor)driver;
         testFirstName = "Test";
         testLastName = "User";
         Random random = new Random();
@@ -87,17 +89,16 @@ public class CredentialManagementTests {
     public void testAddCredential(){
         try{
             signupAndLogin();
-            Thread.sleep(1000);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-credentials-tab")));
-            homePage.navigateToCredentials();
-            WebElement addNoteBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("add-cred-btn")));
-            Thread.sleep(1000);
-            homePage.clickAddCredBtn();
+            WebElement navBtn =  wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-credentials-tab")));
+            js.executeScript("arguments[0].click();", navBtn);
+            WebElement addCredBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("add-cred-btn")));
+            js.executeScript("arguments[0].click();", addCredBtn);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("credential-url")));
             homePage.setCredentialUrl(credUrl);
             homePage.setCredentialUsername(credUsername);
             homePage.setCredentialPassword(credPassword);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("cred-save-btn"))).click();
+            WebElement credSaveBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("cred-save-btn")));
+            js.executeScript("arguments[0].click();", credSaveBtn);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("success-msg")));
             assertEquals(CREDENTIALS_SAVE_SUCCESS, homePage.getSuccessMessage());
             WebElement credText = wait.until(ExpectedConditions.elementToBeClickable(By.id("cred_url_"+credUrl)));
@@ -112,17 +113,16 @@ public class CredentialManagementTests {
     public void testDuplicateCredError(){
         try{
             signupAndLogin();
-            Thread.sleep(1000);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-credentials-tab")));
-            homePage.navigateToCredentials();
-            WebElement addNoteBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("add-cred-btn")));
-            Thread.sleep(1000);
-            homePage.clickAddCredBtn();
+            WebElement navBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-credentials-tab")));
+            js.executeScript("arguments[0].click();", navBtn);
+            WebElement addCredBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("add-cred-btn")));
+            js.executeScript("arguments[0].click();", addCredBtn);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("credential-url")));
             homePage.setCredentialUrl(credUrl);
             homePage.setCredentialUsername(credUsername);
             homePage.setCredentialPassword(credPassword);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("cred-save-btn"))).click();
+            WebElement saveCredBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("cred-save-btn")));
+            js.executeScript("arguments[0].click();", saveCredBtn);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("error-msg")));
             assertEquals(DUPLICATE_CREDENTIAL_ERROR, homePage.getErrorMessage());
         }catch (Exception e){
@@ -136,16 +136,16 @@ public class CredentialManagementTests {
         try{
             signupAndLogin();
             Thread.sleep(1000);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-credentials-tab")));
-            homePage.navigateToCredentials();
+            WebElement navCredBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-credentials-tab")));
+            js.executeScript("arguments[0].click();", navCredBtn);
             WebElement editCredBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("cred_edit_"+credUrl)));
-            Thread.sleep(1000);
-            editCredBtn.click();
+            js.executeScript("arguments[0].click();", editCredBtn);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("credential-url")));
             //homePage.setCredentialUrl(credUrl);
             homePage.setCredentialUsername("-modified");
             homePage.setCredentialPassword(credPassword);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("cred-save-btn"))).click();
+            WebElement credSaveBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("cred-save-btn")));
+            js.executeScript("arguments[0].click();", credSaveBtn);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("success-msg")));
             assertEquals(CREDENTIALS_SAVE_SUCCESS, homePage.getSuccessMessage());
             WebElement credText = wait.until(ExpectedConditions.elementToBeClickable(By.id("cred_usr_"+credUrl)));
@@ -160,12 +160,10 @@ public class CredentialManagementTests {
     public void testDeleteCredential(){
         try{
             signupAndLogin();
-            Thread.sleep(1000);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-credentials-tab")));
-            homePage.navigateToCredentials();
+            WebElement navCredBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-credentials-tab")));
+            js.executeScript("arguments[0].click();", navCredBtn);
             WebElement deleteCredBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("cred_del_"+credUrl)));
-            Thread.sleep(1000);
-            deleteCredBtn.click();
+            js.executeScript("arguments[0].click();", deleteCredBtn);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("success-msg")));
             assertEquals(CREDENTIAL_DELETE_SUCCESS, homePage.getSuccessMessage());
         }catch (Exception e){

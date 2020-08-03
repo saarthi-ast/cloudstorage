@@ -1,6 +1,5 @@
 package com.udacity.jwdnd.course1.cloudstorage.services;
 
-import com.udacity.jwdnd.course1.cloudstorage.mapper.UserMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -9,11 +8,21 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
+/**
+ * The type Authentication service.
+ * @author Sudhir Tyagi
+ */
 @Service
 public class AuthenticationService implements AuthenticationProvider {
-    private UserService userService;
-    private HashService hashService;
+    private final UserService userService;
+    private final HashService hashService;
 
+    /**
+     * Class constructor.
+     *
+     * @param userService the user service
+     * @param hashService the hash service
+     */
     public AuthenticationService(UserService userService, HashService hashService){
         this.hashService = hashService;
         this.userService = userService;
@@ -39,6 +48,12 @@ public class AuthenticationService implements AuthenticationProvider {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 
+    /**
+     * Get logged in user string.
+     *
+     * @param authentication the authentication
+     * @return the string
+     */
     public String getLoggedInUser(Authentication authentication){
         return authentication.getName();
     }

@@ -9,12 +9,24 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.*;
+import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.LOGIN;
+import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.LOGIN_MAPPING;
 
+/**
+ * The type Login controller.
+ * @author Sudhir Tyagi
+ */
 @Controller
 public class LoginController {
     private static final Logger LOG = LoggerFactory.getLogger(LoginController.class);
 
+    /**
+     * Show login page string.
+     *
+     * @param loginForm the login form
+     * @param model     the model
+     * @return the string
+     */
     @GetMapping(LOGIN_MAPPING)
     public String showLoginPage(@ModelAttribute("loginForm") LoginForm loginForm, Model model) {
         LOG.debug("Entered showLoginPage method");

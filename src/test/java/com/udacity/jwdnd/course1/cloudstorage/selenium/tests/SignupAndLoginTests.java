@@ -5,6 +5,7 @@ import com.udacity.jwdnd.course1.cloudstorage.selenium.model.SignupPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -15,6 +16,8 @@ import org.springframework.boot.web.server.LocalServerPort;
 
 import java.util.Random;
 
+import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.HTTP_URL_NOT_VALID;
+import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.SIGNUP_DUPLICATE_USERNAME;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -22,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class SignupAndLoginTests {
     @LocalServerPort
     private Integer port;
-
+    private static JavascriptExecutor js;
     private static WebDriver driver;
     private static String testUsr;
     private static String testPwd;
@@ -31,12 +34,12 @@ public class SignupAndLoginTests {
     private SignupPage signupPage;
     private LoginPage loginPage;
     private WebDriverWait wait;
-    public static final String DUP_USR_ERROR = "This username is already in use. Please try with a different username.";
 
     @BeforeAll
     public static void setup() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
+        js = (JavascriptExecutor) driver;
         testFirstName = "Test";
         testLastName = "User";
         Random random = new Random();
@@ -94,7 +97,7 @@ public class SignupAndLoginTests {
         populateAndSubmitSignup();
         WebElement signupError = wait.until(ExpectedConditions.elementToBeClickable(By.id("error-msg")));
         assertNotNull(signupError);
-        assertEquals(DUP_USR_ERROR, signupPage.getErrorMessage());
+        assertEquals(SIGNUP_DUPLICATE_USERNAME, signupPage.getErrorMessage());
     }
 
     @Test
@@ -109,8 +112,7 @@ public class SignupAndLoginTests {
             WebElement filesTab = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-files-tab")));
             assertNotNull(filesTab);
             WebElement logoutBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("logout-btn")));
-            Thread.sleep(1000);
-            logoutBtn.click();
+            js.executeScript("arguments[0].click();", logoutBtn);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("logout-msg")));
             assertEquals("You have been logged out", loginPage.getLogoutMsg());
             driver.get("http://localhost:8080/home");
@@ -121,4 +123,22 @@ public class SignupAndLoginTests {
         }
     }
 
+    @Test
+    @Order(4)
+    public void testErrorForJunkUrls() {
+        try{
+            driver.get("http://localhost:8080/login");
+            wait.until(ExpectedConditions.elementToBeClickable(By.id("login-submit-btn")));
+            loginPage.setInputUsername(testUsr);
+            loginPage.setInputPassword(testPwd);
+            loginPage.login();
+            WebElement filesTab = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-files-tab")));
+            assertNotNull(filesTab);
+            driver.get("http://localhost:8080/randomTest");
+            WebElement errorMessage = wait.until(ExpectedConditions.elementToBeClickable(By.id("error-msg")));
+            assertEquals(HTTP_URL_NOT_VALID,errorMessage.getText());
+        }catch (Exception e){
+            Assertions.fail("Error occurred while testing testLoginAndLogout");
+        }
+    }
 }

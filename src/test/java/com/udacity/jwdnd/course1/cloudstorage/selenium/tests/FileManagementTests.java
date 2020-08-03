@@ -6,10 +6,7 @@ import com.udacity.jwdnd.course1.cloudstorage.selenium.model.LoginPage;
 import com.udacity.jwdnd.course1.cloudstorage.selenium.model.SignupPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
-import org.openqa.selenium.By;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -29,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class FileManagementTests {
     @LocalServerPort
     private Integer port;
-
+    private static JavascriptExecutor js;
     private static WebDriver driver;
     private static String testUsr;
     private static String testPwd;
@@ -39,13 +36,14 @@ public class FileManagementTests {
     private LoginPage loginPage;
     private HomePage homePage;
     private WebDriverWait wait;
-    private static Random random = new Random();
+    private static final Random random = new Random();
     private static File file;
 
     @BeforeAll
     public static void setup() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
+        js = (JavascriptExecutor) driver;
         testFirstName = "Test";
         testLastName = "User";
         //create a dummy file
@@ -109,8 +107,8 @@ public class FileManagementTests {
         wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-files-tab")));
         try {
             homePage.addFile(file.getPath());
-            Thread.sleep(1000);
-            homePage.uploadFile();
+            WebElement uploadBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("file-submit-btn")));
+            js.executeScript("arguments[0].click();", uploadBtn);
             WebElement filename = wait.until(ExpectedConditions.elementToBeClickable(By.id("filename_" + file.getName())));
             assertNotNull(filename);
             assertEquals(file.getName(), filename.getText());
@@ -128,9 +126,8 @@ public class FileManagementTests {
         wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-files-tab")));
         try {
             homePage.addFile(file.getPath());
-            Thread.sleep(1000);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("file-submit-btn")));
-            homePage.uploadFile();
+            WebElement uploadBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("file-submit-btn")));
+            js.executeScript("arguments[0].click();", uploadBtn);
             WebElement errorMessage = wait.until(ExpectedConditions.elementToBeClickable(By.id("error-msg")));
             assertNotNull(errorMessage);
             assertEquals(FILE_UPLOAD_DUPLICATE_ERROR, homePage.getErrorMessage());
@@ -149,8 +146,7 @@ public class FileManagementTests {
         try {
             WebElement filename = wait.until(ExpectedConditions.elementToBeClickable(By.id("filename_" + file.getName())));
             WebElement deleteFile = wait.until(ExpectedConditions.elementToBeClickable(By.id("file_del_" + file.getName())));
-           Thread.sleep(1000);
-            deleteFile.click();
+            js.executeScript("arguments[0].click();", deleteFile);
             WebElement successMessage = wait.until(ExpectedConditions.elementToBeClickable(By.id("success-msg")));
             assertNotNull(successMessage);
             assertEquals(FILE_DELETE_SUCCESS, homePage.getSuccessMessage());
@@ -181,8 +177,7 @@ public class FileManagementTests {
             homePage.addFile(file.getPath());
             WebElement submitBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("file-submit-btn")));
             assertNotNull(submitBtn);
-            Thread.sleep(1000);
-            homePage.uploadFile();
+            js.executeScript("arguments[0].click();", submitBtn);
             WebElement errorMessage = wait.until(ExpectedConditions.elementToBeClickable(By.id("error-msg")));
             assertNotNull(errorMessage);
             assertEquals(FILE_UPLOAD_SIZE_ERROR, homePage.getErrorMessage());

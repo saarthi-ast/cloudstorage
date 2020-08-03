@@ -8,13 +8,28 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.MAX_FILE_SIZE;
 
+/**
+ * The type Cloud storage application.
+ * @author Sudhir Tyagi
+ */
 @SpringBootApplication
 public class CloudStorageApplication {
 
-	public static void main(String[] args) {
+    /**
+     * The entry point of application.
+     *
+     * @param args the input arguments
+     */
+    public static void main(String[] args) {
 		SpringApplication.run(CloudStorageApplication.class, args);
 	}
-	@Bean
+
+    /**
+     * Multipart resolver multipart resolver.
+     *
+     * @return the multipart resolver
+     */
+    @Bean
 	public MultipartResolver multipartResolver() {
 		CommonsMultipartResolver multipartResolver
 				= new CommonsMultipartResolver();

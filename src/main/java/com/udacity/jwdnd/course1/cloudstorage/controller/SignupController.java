@@ -12,26 +12,49 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.*;
 
+/**
+ * The type Signup controller.
+ * @author Sudhir Tyagi
+ */
 @Controller
 public class SignupController {
     private static final Logger LOG = LoggerFactory.getLogger(SignupController.class);
 
-    private UserService userService;
+    private final UserService userService;
 
+    /**
+     * Class constructor.
+     *
+     * @param userService the user service
+     */
     public SignupController(UserService userService) {
         this.userService = userService;
     }
 
+    /**
+     * Show signup page string.
+     *
+     * @param user  the user
+     * @param model the model
+     * @return the string
+     */
     @GetMapping(SIGNUP_MAPPING)
     public String showSignupPage(@ModelAttribute(USER_FORM) User user, Model model) {
         LOG.debug("signup page requested");
         return SIGNUP;
     }
 
+    /**
+     * Signup string.
+     *
+     * @param user  the user
+     * @param model the model
+     * @return the string
+     */
     @PostMapping(SIGNUP_MAPPING)
     public String signup(@ModelAttribute(USER_FORM) User user, Model model) {
         LOG.debug("New signup request");
-        String signupError = null;
+        String signupError;
         if (!userService.isUsernameAvailable(user.getUsername())) {
             LOG.info("Signup error - "+SIGNUP_DUPLICATE_USERNAME);
             signupError = SIGNUP_DUPLICATE_USERNAME;

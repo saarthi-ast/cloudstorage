@@ -6,6 +6,7 @@ import com.udacity.jwdnd.course1.cloudstorage.selenium.model.SignupPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -17,14 +18,14 @@ import org.springframework.boot.web.server.LocalServerPort;
 import java.util.Random;
 
 import static com.udacity.jwdnd.course1.cloudstorage.constants.ApplicationConstants.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class NotesManagementTests {
     @LocalServerPort
     private Integer port;
-
+    private static JavascriptExecutor js;
     private static WebDriver driver;
     private static String testUsr;
     private static String testPwd;
@@ -40,6 +41,7 @@ public class NotesManagementTests {
     public static void setup() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
+        js = (JavascriptExecutor) driver;
         testFirstName = "Test";
         testLastName = "User";
         Random random = new Random();
@@ -84,15 +86,15 @@ public class NotesManagementTests {
         try{
             signupAndLogin();
             Thread.sleep(1000);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-notes-tab")));
-            homePage.navigateToNotes();
+            WebElement navNotesBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-notes-tab")));
+            js.executeScript("arguments[0].click();", navNotesBtn);
             WebElement addNoteBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("add-note-btn")));
-            Thread.sleep(1000);
-            homePage.clickAddNoteBtn();
+            js.executeScript("arguments[0].click();", addNoteBtn);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("note-title")));
             homePage.setNoteTitle(noteTitle);
             homePage.setNoteDescription("THis is a test.");
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("note-save-btn"))).click();
+            WebElement saveNoteBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("note-save-btn")));
+            js.executeScript("arguments[0].click();", saveNoteBtn);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("success-msg")));
             assertEquals(NOTES_SAVE_SUCCESS, homePage.getSuccessMessage());
             WebElement noteText = wait.until(ExpectedConditions.elementToBeClickable(By.id("noteTitle_"+noteTitle)));
@@ -108,15 +110,15 @@ public class NotesManagementTests {
         try{
             signupAndLogin();
             Thread.sleep(1000);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-notes-tab")));
-            homePage.navigateToNotes();
+            WebElement navNoteBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-notes-tab")));
+            js.executeScript("arguments[0].click();", navNoteBtn);
             WebElement addNoteBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("add-note-btn")));
-            Thread.sleep(1000);
-            homePage.clickAddNoteBtn();
+            js.executeScript("arguments[0].click();", addNoteBtn);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("note-title")));
             homePage.setNoteTitle(noteTitle);
             homePage.setNoteDescription("THis is a test.");
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("note-save-btn"))).click();
+            WebElement saveNoteBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("note-save-btn")));
+            js.executeScript("arguments[0].click();", saveNoteBtn);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("error-msg")));
             assertEquals(NOTE_DUPLICATE_ERROR, homePage.getErrorMessage());
         }catch (Exception e){
@@ -129,16 +131,15 @@ public class NotesManagementTests {
     public void testEditNote(){
         try{
             signupAndLogin();
-            Thread.sleep(1000);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-notes-tab")));
-            homePage.navigateToNotes();
+            WebElement navNotesBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-notes-tab")));
+            js.executeScript("arguments[0].click();", navNotesBtn);
             WebElement editNote = wait.until(ExpectedConditions.elementToBeClickable(By.id("note_edit_"+noteTitle)));
-            Thread.sleep(1000);
-            editNote.click();
+            js.executeScript("arguments[0].click();", editNote);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("note-title")));
             //homePage.setNoteTitle(noteTitle);
             homePage.setNoteDescription(" Modified");
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("note-save-btn"))).click();
+            WebElement saveNoteBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("note-save-btn")));
+            js.executeScript("arguments[0].click();", saveNoteBtn);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("success-msg")));
             WebElement noteDesc = wait.until(ExpectedConditions.elementToBeClickable(By.id("noteDesc_"+noteTitle)));
             assertEquals("THis is a test. Modified", noteDesc.getText());
@@ -152,12 +153,10 @@ public class NotesManagementTests {
     public void testDeleteNote(){
         try{
             signupAndLogin();
-            Thread.sleep(1000);
-            wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-notes-tab")));
-            homePage.navigateToNotes();
+            WebElement navNotesBtn = wait.until(ExpectedConditions.elementToBeClickable(By.id("nav-notes-tab")));
+            js.executeScript("arguments[0].click();", navNotesBtn);
             WebElement deleteNote = wait.until(ExpectedConditions.elementToBeClickable(By.id("note_del_"+noteTitle)));
-            Thread.sleep(1000);
-            deleteNote.click();
+            js.executeScript("arguments[0].click();", deleteNote);
             wait.until(ExpectedConditions.elementToBeClickable(By.id("success-msg")));
             assertEquals(NOTE_DELETE_SUCCESS, homePage.getSuccessMessage());
         }catch (Exception e){
